@@ -79,7 +79,8 @@ body.dark .calculator input{
     button:nth-child(4),
     button:nth-child(5),
     button:nth-child(9),
-    button:nth-child(13)
+    button:nth-child(13),
+    .calculator button:nth-child(17)
     {
       background-color:  #ff9800;
       color: white;
@@ -89,11 +90,23 @@ body.dark  .calculator button:nth-child(2),
     body.dark  .calculator button:nth-child(4),
     body.dark  .calculator button:nth-child(5),
     body.dark  .calculator button:nth-child(9),
-   body.dark  .calculator  button:nth-child(13)
+   body.dark  .calculator  button:nth-child(13),
+   body.dark .calculator button:nth-child(17)
     {
       background-color:  #ff9800;
       color: white;
     }
+
+    .calculator button:nth-child(17)
+    {
+      grid-row: span 2;
+      height: 109px;
+    }
+.calculator button:nth-child(21)
+{
+  grid-column: span 2;
+}
+
 
   .btn {
     display: flex;
@@ -121,7 +134,7 @@ body.dark  .calculator button:nth-child(2),
     left: 0;
     right: 0;
     bottom: 0;
-    transition: .4s;
+    transition: 3s;
     background-color: #ccc;
   }
 
@@ -136,7 +149,7 @@ body.dark  .calculator button:nth-child(2),
   background-size: 20px;   
   background-repeat: no-repeat;
   background-position: center;
-  transition: .4s;
+  transition: 3s;
 
 }
 
@@ -174,21 +187,39 @@ body.dark  .calculator button:nth-child(2),
     <input type="text" name="" id="dis">
     
     <button onclick="disclear()"">C</button>
+    <button onclick="avalue('(')">(</button>
+    <button onclick="avalue(')')">)</button>
+    <button onclick="backspace()">⌫</button>
+
+     <button onclick="square()">x <sup>2</sup></button>
+    <button onclick="percent()">%</button> 
+    <button onclick="avalue('*')">x</button>
      <button onclick=" avalue('/')">/</button>
-    <button onclick="avalue('*')">*</button>
-    <button onclick="avalue('-')">+</button>
+
     <button onclick="avalue('7')">7</button>
     <button onclick="avalue('8')">8</button>
     <button onclick="avalue('9')">9</button>
-    <button onclick="avalue('+')">+</button>
-    <button onclick="avalue('4')">4</button>
+    <button onclick="avalue('-')">-</button>
+    
+    
+      <button onclick="avalue('4')">4</button>
     <button onclick="avalue('5')">5</button>
     <button onclick="avalue('6')">6</button>
-    <button onclick="calculator()">=</button>
-    <button onclick="avalue('1')">1</button>
+      <button onclick="avalue('+')">+</button>
+    
+    
+     <button onclick="avalue('1')">1</button>
     <button onclick="avalue('2')">2</button>
     <button onclick="avalue('3')">3</button>
+    <button onclick="avalue('00')">00</button>
     <button onclick="avalue('0')">0</button>
+    
+   
+    
+    
+  
+       <button onclick="calculator()">=</button>
+    
 
 
   </div>
@@ -215,14 +246,112 @@ body.dark  .calculator button:nth-child(2),
     function disclear() {
       dis.value = " ";
     }
+
     function avalue(value) {
 
       dis.value += value
+
+      
     }
     function calculator() {
       dis.value = eval(dis.value)
     }
+
+
+    function backspace()
+    {
+      let dis = document.getElementById('dis');
+      dis.value = dis.value.slice( 0 ,-1)
+
+    }
+
+
+    function square()
+    {
+      if(dis.value != "")
+    {
+      dis.value= Math.pow(dis.value , 2)
+    }
+    }
+
+
+
+
+   function percent() {
+  try {
+    let expr = dis.value.trim();
+    if (!expr) return;
+
+    // If user already typed a '%' character, just convert and eval
+    if (expr.includes('%')) {
+      dis.value = eval(expr.replace(/%/g, "/100"));
+      return;
+    }
+
+    // find the last operator (+ - * /). ignore leading minus sign
+    const ops = ['+', '-', '*', '/'];
+    let lastOpIndex = -1;
+    let lastOp = null;
+    for (let op of ops) {
+      const idx = expr.lastIndexOf(op);
+      if (idx > lastOpIndex) {
+        lastOpIndex = idx;
+        lastOp = op;
+      }
+    }
+
+    // no operator (or operator is at start, e.g. "-5") → simple percent
+    if (lastOpIndex <= 0) {
+      const num = parseFloat(expr);
+      if (isNaN(num)) { dis.value = "Error"; return; }
+      dis.value = (num / 100).toString();
+      return;
+    }
+
+    // split into left and right parts
+    const leftExpr = expr.slice(0, lastOpIndex);
+    const rightExpr = expr.slice(lastOpIndex + 1);
+    if (rightExpr === "") return; // nothing to convert
+
+    // evaluate left and right expressions (handles sub-expressions)
+    const base = eval(leftExpr);
+    const value = eval(rightExpr);
+    if (isNaN(base) || isNaN(value)) { dis.value = "Error"; return; }
+
+    let result;
+    switch (lastOp) {
+      case '*':
+        result = base * (value / 100);
+        break;
+      case '/':
+        result = base / (value / 100);
+        break;
+      case '+':
+        result = base + base * (value / 100);
+        break;
+      case '-':
+        result = base - base * (value / 100);
+        break;
+      default:
+        result = value / 100;
+    }
+
+    // limit floating-point noise
+    dis.value = parseFloat(result.toFixed(12)).toString();
+  } catch (e) {
+    dis.value = "Error";
+  }
+}
+
+
+    
+    
+
+  
+  
+  
   </script>
+
 
 
 </body>
