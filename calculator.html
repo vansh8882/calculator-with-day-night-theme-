@@ -187,8 +187,8 @@ body.dark  .calculator button:nth-child(2),
     <input type="text" name="" id="dis">
     
     <button onclick="disclear()"">C</button>
-    <button onclick="avalue('(')">(</button>
-    <button onclick="avalue(')')">)</button>
+    <button onclick="devid()"><sup>1</sup>/ <sub>x</sub></button>
+    <button onclick="root()"><sup>2</sup> &#8730; x </button>
     <button onclick="backspace()">⌫</button>
 
      <button onclick="square()">x <sup>2</sup></button>
@@ -345,7 +345,18 @@ body.dark  .calculator button:nth-child(2),
 
 
     
-    
+  function devid()
+  {
+    if(dis.value !== null)
+
+    dis.value = 1/dis.value
+  }
+
+  function root()
+  {
+    if(dis.value !== null)
+      dis.value = Math.sqrt(2, dis.value)
+  }
 
   
   
